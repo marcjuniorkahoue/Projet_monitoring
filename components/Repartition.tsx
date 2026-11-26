@@ -7,7 +7,8 @@ export default async function Repartition() {
   const { rows } = await pool.query(`
     SELECT COUNT(*) FILTER (WHERE environment = 'production')::int AS prod,
            COUNT(*) FILTER (WHERE environment = 'homologation')::int AS hom
-    FROM applications`);
+    FROM applications
+    WHERE deleted_at IS NULL`);
 
   const { prod, hom } = rows[0];
   const total = prod + hom;

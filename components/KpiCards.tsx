@@ -12,8 +12,12 @@ export default async function KpiCards() {
              COUNT(*) FILTER (WHERE status = 'down')::int AS down,
              COUNT(*) FILTER (WHERE environment = 'production')::int AS prod,
              COUNT(*) FILTER (WHERE environment = 'homologation')::int AS hom
-      FROM applications`),
-    pool.query(`SELECT COUNT(*)::int AS bad FROM servers WHERE status <> 'ok'`),
+      FROM applications
+      WHERE deleted_at IS NULL`),
+    pool.query(`
+      SELECT COUNT(*)::int AS bad
+      FROM servers
+      WHERE status <> 'ok' AND deleted_at IS NULL`),
   ]);
 
   const a = apps.rows[0];

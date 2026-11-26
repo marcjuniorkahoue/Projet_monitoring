@@ -11,6 +11,7 @@ export default async function AppsTable() {
            s.name AS server, s.status AS server_status, s.incident_message
     FROM applications a
     JOIN servers s ON s.id = a.server_id
+    WHERE a.deleted_at IS NULL
     ORDER BY a.name`);
 
   return <AppsTableClient rows={rows} />;

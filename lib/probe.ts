@@ -24,7 +24,7 @@ async function tester(url: string): Promise<{ etat: Etat; ms: number | null }> {
 export async function lancerTests() {
   // On lit aussi l'état précédent, pour repérer les changements
   const { rows } = await pool.query(
-    "SELECT id, name, url, status, server_id FROM applications WHERE url IS NOT NULL"
+   "SELECT id, name, url, status, server_id FROM applications WHERE url IS NOT NULL AND deleted_at IS NULL"
   );
 
   const resultats = await Promise.all(
@@ -65,6 +65,8 @@ export async function lancerTests() {
   }
 
   // L'état de chaque serveur est déduit de celui de ses applications
+    // L'état de chaque serveur est déduit de celui de ses applications actives
+    // L'état de chaque serveur est déduit de celui de ses applications actives
   await pool.query(`
     UPDATE servers s SET
       status = CASE
@@ -78,13 +80,14 @@ export async function lancerTests() {
         ELSE NULL END,
       updated_at = now()
     FROM (
-      SELECT server_id,
-             COUNT(*)::int AS total,
-             COUNT(*) FILTER (WHERE status = 'down')::int AS down,
-             COUNT(*) FILTER (WHERE status = 'degraded')::int AS degraded
-      FROM applications GROUP BY server_id
+      SELECT s2.id AS server_id,
+             COUNT(a.id)::int AS total,
+             COUNT(a.id) FILTER (WHERE a.status = 'down')::int AS down,
+             COUNT(a.id) FILTER (WHERE a.status = 'degraded')::int AS degraded
+      FROM servers s2
+      LEFT JOIN applications a ON a.server_id = s2.id AND a.deleted_at IS NULL
+      GROUP BY s2.id
     ) t
-    WHERE t.server_id = s.id`);
-
+    WHERE t.server_id = s.id AND s.deleted_at IS NULL`);
   return resultats.map(({ id, nom, etat, ms }) => ({ id, nom, etat, ms }));
 }
