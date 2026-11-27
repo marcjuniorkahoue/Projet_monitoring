@@ -37,6 +37,7 @@ const LIBELLES: Record<string, string> = {
   "serveur.restaure": "Serveur restauré",
     "profil.modifie": "Profil modifié",
   "session.fermee": "Session fermée par un administrateur",
+    "compte.identite": "Nom ou fonction modifié",
 };
 
 const categorie = (a: string) => {
@@ -50,7 +51,7 @@ const categorie = (a: string) => {
 const couleur = (a: string) =>
  /echec|verrouillage|desactive|corbeille|supprime|fermee/.test(a)
     ? "t-ko"
-    : /modifi|role|reinit|change/.test(a)
+    : /modifi|role|reinit|change|identite/.test(a)
     ? "t-wa"
     : "t-ok";
 

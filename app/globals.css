@@ -1,9 +1,9 @@
 /* ================= Base ================= */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: #0a2a52 url("/fond.webp") center / cover no-repeat fixed; }
-:focus-visible { outline: 3px solid #3d8bd9; outline-offset: 2px; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+body { margin: 0; background: #0a2a52 url("896.png") center top / cover no-repeat fixed; }
+:focus-visible { outline: 3px solid ; outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: visible; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ================= Structure ================= */
 .app { display: flex; min-height: 100vh; min-height: 100dvh; color: #0e2745; }
@@ -113,9 +113,9 @@ form.inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 
 /* ================= Connexion ================= */
 .auth { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 16px;
-  background: linear-gradient(rgba(10, 42, 82, 0.55), rgba(10, 42, 82, 0.55)); }
+  background: rgba(255, 255, 255, 0.10); }
 .glass { width: 100%; max-width: 400px; border-radius: 24px; overflow: hidden; color: #fff;
-  background: rgba(10, 42, 82, 0.78); backdrop-filter: blur(10px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); }
+  background: rgba(10, 42, 82, 0.88); backdrop-filter: blur(10px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); }
 .glass-head { padding: 18px 24px; text-align: center; background: linear-gradient(90deg, #0f4a8a, #3d8bd9); }
 .glass-head h1 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
 .glass-body { padding: 28px; }
@@ -178,3 +178,7 @@ form.inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 @media (prefers-reduced-motion: reduce) {
   .side { transition: none; }
 }
+/* Nom et fonction modifiables dans la liste des comptes */
+.ident { display: grid; gap: 6px; min-width: 210px; justify-items: start; }
+.ident input { width: 100%; padding: 6px 10px; border: 1px solid #c4d3e6; border-radius: 8px; font: inherit; font-size: 14px; color: #0e2745; background: #fff; }
+.ident .err, .ident .okmsg { margin: 0; padding: 4px 10px; font-size: 13px; }

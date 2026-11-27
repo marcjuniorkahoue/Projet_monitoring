@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { exigerUtilisateur } from "@/lib/auth";
-import ProfileForm from "@/components/ProfileForm";
 
 const DROITS = [
   ["apps_add", "Ajouter et modifier des applications"],
@@ -18,15 +17,17 @@ async function Contenu() {
     <div className="stack">
       <section className="card">
         <h2>Mes informations</h2>
-        <ProfileForm nom={u.full_name} fonction={u.job_title ?? ""} />
+        <p>Nom : <b>{u.full_name}</b></p>
+        <p>Fonction : <b>{u.job_title || "Non renseignée"}</b></p>
+        <p>Adresse e-mail : <b>{u.email}</b></p>
+        <p>Rôle : <b>{u.role}</b></p>
+        <p className="note">
+          Pour modifications de quelques informations personnelles , contactez un administrateur.
+        </p>
       </section>
 
       <section className="card">
-        <h2>Mon compte</h2>
-        <p>Adresse e-mail : <b>{u.email}</b></p>
-        <p>Rôle : <b>{u.role}</b></p>
-        <p className="note">L'adresse e-mail et le rôle sont définis par l'administrateur.</p>
-
+        <h2>Mes droits</h2>
         <div className="checks">
           {DROITS.map(([cle, libelle]) => (
             <div key={cle}>
@@ -35,7 +36,6 @@ async function Contenu() {
             </div>
           ))}
         </div>
-
         <Link href="/mot-de-passe" className="btn-small">Changer mon mot de passe</Link>
       </section>
     </div>

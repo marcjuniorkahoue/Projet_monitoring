@@ -1,6 +1,11 @@
 "use client";
 import { useActionState } from "react";
-import { changerRoleUtilisateur, basculerActif, reinitialiserMotDePasse } from "@/app/(app)/parametres/actions";
+import {
+  changerRoleUtilisateur,
+  basculerActif,
+  reinitialiserMotDePasse,
+  modifierIdentite,
+} from "@/app/(app)/parametres/actions";
 import ConfirmButton from "./ConfirmButton";
 
 export type UserItem = {
@@ -18,14 +23,25 @@ export default function UserRow({
   u, roles, moiId,
 }: { u: UserItem; roles: { id: number; name: string }[]; moiId: number }) {
   const [reset, resetAction] = useActionState(reinitialiserMotDePasse, undefined);
+  const [identite, identiteAction, enCours] = useActionState(modifierIdentite, undefined);
   const estMoi = u.id === moiId;
 
   return (
     <tr>
       <td>
-        {u.full_name}{estMoi && <span className="env"> (vous)</span>}
-        <div className="env">{u.job_title || "Fonction non renseignée"}</div>
-        <div className="env">{u.email}</div>
+        <form action={identiteAction} className="ident">
+          <input type="hidden" name="id" value={u.id} />
+          <label htmlFor={`nom-${u.id}`} className="sr-only">Nom de {u.email}</label>
+          <input id={`nom-${u.id}`} name="nom" defaultValue={u.full_name} required maxLength={100} placeholder="Nom complet" />
+          <label htmlFor={`fonction-${u.id}`} className="sr-only">Fonction de {u.email}</label>
+          <input id={`fonction-${u.id}`} name="fonction" defaultValue={u.job_title ?? ""} maxLength={100} placeholder="Fonction" />
+          <div className="env">{u.email}{estMoi && " (vous)"}</div>
+          <button type="submit" className="btn-small" disabled={enCours}>
+            {enCours ? "Enregistrement…" : "Enregistrer"}
+          </button>
+          {identite?.erreur && <div className="err">{identite.erreur}</div>}
+          {identite?.ok && <div className="okmsg" role="status">Enregistré.</div>}
+        </form>
       </td>
 
       <td>

@@ -191,3 +191,43 @@ export async function supprimerRole(fd: FormData) {
   }
   rafraichir();
 }
+// ---------- Nom et fonction ----------
+
+export type EtatIdentite = { erreur?: string; ok?: boolean } | undefined;
+
+export async function modifierIdentite(_etat: EtatIdentite, fd: FormData): Promise<EtatIdentite> {
+  const moi = await exigerDroit("manage_users"); // seul celui qui gère les comptes peut le faire
+
+  const id = Number(fd.get("id"));
+  const nom = String(fd.get("nom") ?? "").trim();
+  const fonction = String(fd.get("fonction") ?? "").trim();
+
+  if (!id) return { erreur: "Compte inconnu." };
+  if (!nom || nom.length > 100) return { erreur: "Le nom est obligatoire (100 caractères maximum)." };
+  if (fonction.length > 100) return { erreur: "La fonction ne peut pas dépasser 100 caractères." };
+
+  const avant = await pool.query("SELECT email, full_name, job_title FROM users WHERE id = $1", [id]);
+  if (!avant.rowCount) return { erreur: "Compte introuvable." };
+
+  await pool.query("UPDATE users SET full_name = $1, job_title = $2 WHERE id = $3", [
+    nom,
+    fonction || null,
+    id,
+  ]);
+
+  const changements = diff(
+    { nom: avant.rows[0].full_name, fonction: avant.rows[0].job_title ?? "" },
+    { nom, fonction }
+  );
+  if (Object.keys(changements).length) {
+    await journaliser({
+      action: "compte.identite",
+      utilisateur: moi,
+      cible: { type: "compte", id, libelle: avant.rows[0].email },
+      details: changements,
+    });
+  }
+
+  revalidatePath("/", "layout"); // le nom du menu se met à jour si l'administrateur s'est modifié lui-même
+  return { ok: true };
+}

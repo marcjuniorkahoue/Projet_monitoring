@@ -8,7 +8,7 @@ import Repartition from "@/components/Repartition";
 export default function Page() {
   return (
     <>
-      <h1 className="title">Supervision des applications</h1>
+      <h1 className="title">DASHBOARD MONITORING</h1>
       <Suspense fallback={<p>Chargement…</p>}>
         <KpiCards />
       </Suspense>
